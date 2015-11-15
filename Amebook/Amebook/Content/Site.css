@@ -17,30 +17,41 @@
 }
 
 /* Set width on the form input elements since they're 100% wide by default */
-input,
-select,
 
 
-.ramka1{
-
-  margin-top:25px;
-
+div {
+    display: block;
 }
 
-.ramka2{
-    position:relative;
-    display:block;
-    left:50%;
-    margin-left:-190px;
-   
+.content {
+    width: 100%;
 }
 
-.backramka{
-    margin-top:20px;
-    margin-left:inherit;
-    background-color:slategray;
-
-
+.new-post-box {
+    width: 400px;
+    margin: 10px auto;
+    padding: 10px;
+    height: 135px;
+    border: 1px black solid;
+    border-radius: 10px;
 }
 
+.new-post-inner textarea {
+    width: 100%;
+    margin-bottom: 10px;
+    height: 5em;
+    resize: none;
+    padding: 5px;
+    border-radius: 10px;
+}
+
+textarea:focus {
+    outline: none;
+    box-shadow: 0 0 1pt 1pt #A9A9A9;
+}
+
+.new-post-inner button {
+    float: right;
+    position: relative;
+}
 
