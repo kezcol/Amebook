@@ -327,6 +327,19 @@ textarea {
   line-height: inherit;
 }
 
+textarea {
+ width: 300px;
+ height: 80px;
+ resize: none;
+}
+
+textarea {
+ min-width: 300px;
+ max-width: 300px;
+ min-height: 80px;
+ max-height: 80px;
+}
+
 button,
 input,
 select[multiple],

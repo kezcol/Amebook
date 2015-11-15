@@ -20,5 +20,18 @@
 input,
 select,
 textarea {
-    max-width: 280px;
+    max-width: 300px;
+    width:300px;
+}
+
+.ramka1{
+
+  margin-top:25px;
+
+}
+
+.ramka2{
+
+    display:block;
+    margin:0 auto;
 }
