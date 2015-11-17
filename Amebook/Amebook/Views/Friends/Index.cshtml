@@ -1,0 +1,15 @@
+﻿<input type="button" id="generate" class="btn btn-default" value="Generuj"/>
+<script>
+    $("#generate").click(function () {
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("Index", "Friends")', // Defaultowo to aktualny URL
+            contentType: "application/json; charset=utf-8",
+            dataType: "json", // może być też "xml", "text" - czyli zwykly string, "html" np. zwracamy partialView
+            success: function (result) { // kod, który się wykona jeśli żądanie przejdzie pomyślnie, np. alert("wszystko ok");
+                // result to dane przesłane z serwera
+                alert(result);
+            }
+        });
+    });
+</script>
