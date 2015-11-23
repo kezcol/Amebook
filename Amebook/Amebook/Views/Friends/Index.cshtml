@@ -1,4 +1,11 @@
-﻿<input type="button" id="generate" class="btn btn-default" value="Generuj"/>
+﻿@Styles.Render("~/Content/Friend.css")
+<div class="add-friend">
+    <input type="text" placeholder="Podaj klucz" class="form-control" id="add-friend-key"/>
+    <input type="button" value="Add" class="btn btn-default add-button" id="add-firend-button"/>
+</div>
+
+<input type="button" id="generate" class="btn btn-default" value="Generuj"/>
+<div id="key"></div>
 <script>
     $("#generate").click(function () {
         $.ajax({
@@ -8,8 +15,31 @@
             dataType: "json", // może być też "xml", "text" - czyli zwykly string, "html" np. zwracamy partialView
             success: function (result) { // kod, który się wykona jeśli żądanie przejdzie pomyślnie, np. alert("wszystko ok");
                 // result to dane przesłane z serwera
-                alert(result);
+                if (result === "TooMuchKeys") {
+                    alert("Masz już pięć wygenerowanych kluczy");
+                } else {
+                    $("#key").append(result + "<br>");
+                }
             }
         });
     });
+
+    $("#add-firend-button").click(function() {
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("AddFriend", "Friends")', // Defaultowo to aktualny URL
+            contentType: "application/json; charset=utf-8",
+            dataType: "json", // może być też "xml", "text" - czyli zwykly string, "html" np. zwracamy partialView
+            data: { 'key': $("#add-friend-key").val() },
+            success: function (result) { // kod, który się wykona jeśli żądanie przejdzie pomyślnie, np. alert("wszystko ok");
+                // result to dane przesłane z serwera
+                if (result === "TooMuchKeys") {
+                    alert("Masz już pięć wygenerowanych kluczy");
+                } else {
+                    $("#key").append(result + "<br>");
+                }
+            }
+        });
+    });
+
 </script>

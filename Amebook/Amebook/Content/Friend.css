@@ -1,0 +1,16 @@
+﻿.add-friend {
+    width: 400px;
+    padding: 10px;
+}
+
+.add-friend input {
+    display: inline;
+}
+
+.add-friend .form-control {
+    width: 320px;
+}
+
+.add-friend .add-button {
+    float: right;
+}
