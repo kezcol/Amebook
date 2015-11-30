@@ -1,0 +1,56 @@
+﻿.add-friend {
+    
+}
+
+.add-friend input {
+    display: inline-block;
+}
+
+#add-friend-key {
+    width: calc(100% - 60px);
+}
+
+.add-friend .form-control {
+    width: 320px;
+}
+
+.add-friend .add-button {
+    float: right
+}
+
+.add-friend-notification {
+    color: red;
+}
+
+#key {
+    display: flex;
+    align-items: stretch;
+}
+
+#key div {
+    margin-right: 10px;
+}
+#generate {
+    
+}
+
+.key-wrapper {
+    display: block;
+    border: darkgray solid 1px;
+    border-radius: 10px;
+    width: 100%;
+    padding: 2px;
+    margin: 5px;
+    text-align: center;
+}
+
+#keys {
+    width: 100%;
+}
+
+.remove-key {
+    float: right;
+    margin-top: 1px;
+    margin-right: 3px;
+    cursor: pointer;
+}

@@ -21,7 +21,7 @@ namespace Amebook.Models
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext()
-            : base("DefaultConnection", throwIfV1Schema: false)
+            : base("AmebookDB", throwIfV1Schema: false)
         {
         }
 
@@ -29,5 +29,9 @@ namespace Amebook.Models
         {
             return new ApplicationDbContext();
         }
+
+        public DbSet<Account> Accounts { get; set; }
+        public DbSet<Invitation> Invitations { get; set; }
+        public DbSet<Friend> Friends { get; set; }
     }
 }
