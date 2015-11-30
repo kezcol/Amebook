@@ -10,14 +10,15 @@ namespace Amebook.Crypto
     public class CryptoRandom
     {
         private static RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider();
+
         private static int[] generateIntTab(int tab_size, int maxValue)
         {
             byte[] tab = new byte[tab_size];
             provider.GetBytes(tab);
-            int[] IntegerArray = tab.Select(x => (int)x).ToArray();
+            int[] IntegerArray = tab.Select(x => (int) x).ToArray();
             for (int i = 0; i < IntegerArray.Length; ++i)
             {
-                IntegerArray[i] = IntegerArray[i] % maxValue;
+                IntegerArray[i] = IntegerArray[i]%maxValue;
             }
             return IntegerArray;
 
@@ -46,7 +47,8 @@ namespace Amebook.Crypto
                 key.Append(PASSSTABLE[x]);
             }
             return key.ToString();
-        }
+            }
 
+        }
     }
 }

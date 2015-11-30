@@ -1,15 +1,90 @@
-﻿<input type="button" id="generate" class="btn btn-default" value="Generuj"/>
+﻿@model List<Amebook.Models.Invitation>
+@Styles.Render("~/Content/Friend.css")
+<div class="row">
+    <div class="add-friend col-sm-4">
+        <input type="text" placeholder="Podaj klucz" class="form-control" id="add-friend-key"/>
+        <input type="button" value="Add" class="btn btn-default add-button" id="add-firend-button"/>
+        <div class="add-friend-notification"></div>
+    </div>
+    <div class="col-sm-1">
+        <input type="button" class="btn btn-default" value="Klucze" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample" />
+    </div>
+    <div class="col-sm-5">
+        <div class="collapse" id="collapseExample">
+            <div id="key" class="well">
+                <div>
+                    <input type="button" id="generate" class="btn btn-default" value="Generuj"/>
+                </div>
+                <div id="keys">
+                    @foreach (var invitation in Model)
+                    {
+                        <span class="key-wrapper">@invitation.InvitationKey <span class="glyphicon glyphicon-remove remove-key"></span></span>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
 <script>
+
     $("#generate").click(function () {
         $.ajax({
             type: "GET",
-            url: '@Url.Action("Index", "Friends")', // Defaultowo to aktualny URL
+            url: '@Url.Action("Index", "Friends")', 
             contentType: "application/json; charset=utf-8",
-            dataType: "json", // może być też "xml", "text" - czyli zwykly string, "html" np. zwracamy partialView
-            success: function (result) { // kod, który się wykona jeśli żądanie przejdzie pomyślnie, np. alert("wszystko ok");
-                // result to dane przesłane z serwera
-                alert(result);
+            dataType: "json", 
+            success: function (result) { 
+                
+                if (result !== "TooMuchKeys") {
+                    $("#keys").append('<span class="key-wrapper">' + result + '<span class="glyphicon glyphicon-remove remove-key"></span></span>');
+                }
+                removeKey();
             }
         });
     });
+
+    $("#add-firend-button").click(function () {
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("AddFriend", "Friends")', 
+            contentType: "application/json; charset=utf-8",
+            dataType: "json", 
+            data: { 'key': $("#add-friend-key").val() },
+            success: function (result) { 
+                $(".add-friend-notification").html(result);
+            }
+        });
+    });
+
+    $("#add-friend-key").on('paste input propertychange', function () {
+        $(".add-friend-notification").empty();
+    });
+
+    $(function () {
+        $('[data-toggle="popover"]').popover();
+    });
+
+    function removeKey() {
+        $(".remove-key").click(function () {
+            var parent = $(this).parent();
+            var key = $(parent).text();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("RemoveKey", "Friends")', 
+                contentType: "application/json; charset=utf-8",
+                dataType: "json", 
+                data: { 'key': key },
+                success: function (response) { 
+                    if (response) {
+                        $(parent).remove();
+                    }
+                }
+            });
+        });
+    }
+    removeKey();
+
 </script>
+
+

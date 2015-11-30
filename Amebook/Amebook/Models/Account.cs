@@ -13,7 +13,9 @@ namespace Amebook.Models
         public string AccountId { get; set; }
         public string Nickname { get; set; }
 
+
         [ForeignKey("AccountId")]
         public virtual ApplicationUser ApplicationUser { get; set; }
+        public virtual ICollection<Friend> Friends { get; set; }
     }
 }
