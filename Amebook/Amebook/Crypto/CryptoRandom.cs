@@ -39,3 +39,4 @@ namespace Amebook.Crypto
             return txt.ToString();
         }
     }
+}
