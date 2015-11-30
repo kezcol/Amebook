@@ -54,3 +54,56 @@ textarea:focus {
     position: relative;
 }
 
+.post-content {
+    width: 100%;
+    margin-top:20px;
+}
+
+.post{
+    width:400px;
+    margin: 10px auto;
+    padding: 10px;
+    height:170px ;
+    border: 1px black solid;
+    border-radius: 10px;
+}
+
+
+.new-new-post-inner buttonplus {
+    float: left;
+    position: relative;
+    background-color:lightgreen;
+    height:35px;
+    width:35px;
+}
+
+.new-new-post-inner buttonminus {
+    float: left;
+    position: relative;
+    background-color: indianred;
+    height:35px;
+    width:35px;
+}
+.new-new-post-inner textarea {
+    width: 100%;
+    margin-bottom: 10px;
+    height: 5em;
+    resize: none;
+    padding: 5px;
+    border-radius: 10px;
+}
+
+.paragraph{
+    height:90px;
+}
+
+.user{
+    font-weight:bold;
+    
+    
+}
+
+.data{
+    float:right;
+    font-size:smaller;
+}

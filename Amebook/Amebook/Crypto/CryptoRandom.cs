@@ -51,4 +51,3 @@ namespace Amebook.Crypto
 
         }
     }
-}
