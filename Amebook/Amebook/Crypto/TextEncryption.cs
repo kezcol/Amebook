@@ -9,7 +9,6 @@ namespace Amebook.Crypto
 {
     public class TextEncryption
     {
-        // TODO
         static byte[] AesEncrypt(String text, byte[] Key, byte[] IV)
         {
             byte[] cipher;
@@ -66,22 +65,70 @@ namespace Amebook.Crypto
             }
             return text;
         }
-        void AesTest()
+
+        static byte[] AesKeyEncrypt(byte[] Key, byte[] IV, RSAParameters KeyInfo)
+        {
+            byte[] encryptedData;
+            byte[] aesKey = new byte[Key.Length + IV.Length];
+            Console.WriteLine(Key.Length + " " + IV.Length);
+            System.Buffer.BlockCopy(Key, 0, aesKey, 0, Key.Length);
+            System.Buffer.BlockCopy(IV, 0, aesKey, Key.Length, IV.Length);
+            using (RSACryptoServiceProvider rsaAlg = new RSACryptoServiceProvider())
+            {
+                rsaAlg.ImportParameters(KeyInfo);
+                encryptedData = rsaAlg.Encrypt(aesKey, true);
+            }
+            return encryptedData;
+        }
+        static byte[][] DecryptAesKey(byte[] encryptedData, RSAParameters KeyInfo)
+        {
+            byte[][] aesKeys = new byte[2][];
+            aesKeys[0] = new byte[32];
+            aesKeys[1] = new byte[16];
+            using (RSACryptoServiceProvider rsaAlg = new RSACryptoServiceProvider())
+            {
+                rsaAlg.ImportParameters(KeyInfo);
+                byte[] tmp = rsaAlg.Decrypt(encryptedData, true);
+                System.Buffer.BlockCopy(tmp, 0, aesKeys[0], 0, 32);
+                System.Buffer.BlockCopy(tmp, 32, aesKeys[1], 0, 16);
+
+            }
+
+
+            return aesKeys;
+        }
+
+        static void test()
         {
             try
             {
                 string text = "Here is some data to encrypt, lol";
+
+                //tworzy klucz AES i macierz Inicjującą
                 using (Aes myAes = Aes.Create())
                 {
-                    byte[] encrypted_data = AesEncrypt(text, myAes.Key, myAes.IV);
-                    string plaintext = AesDecrypt(encrypted_data, myAes.Key, myAes.IV);
-                    //Console.WriteLine(plaintext);
+                    //tworzy nowa pare kluczy RSA
+                    using (RSACryptoServiceProvider myRsa = new RSACryptoServiceProvider())
+                    {
+                        //Szyfrujemy text i zapisujemy do bazy 
+                        byte[] encrypted_data = AesEncrypt(text, myAes.Key, myAes.IV);
+                        //Szyfrujemy klucz i zapisujemy do bazy
+                        byte[] encrypted_key = AesKeyEncrypt(myAes.Key, myAes.IV, myRsa.ExportParameters(false));
+
+                        // Deszyfrowanie
+
+                        byte[][] AesKeys = DecryptAesKey(encrypted_key, myRsa.ExportParameters(true));
+                        string plaintext = AesDecrypt(encrypted_data, AesKeys[0], AesKeys[1]);
+                        Console.WriteLine(plaintext);
+                    }
+
                 }
-              //  Console.ReadKey();
+                Console.ReadKey();
             }
             catch (Exception e)
             {
-               // Console.WriteLine(e.Message);
+                Console.WriteLine(e.Message);
+                Console.ReadKey();
             }
         }
     }
