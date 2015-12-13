@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Xml;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
@@ -167,7 +169,20 @@ namespace Amebook.Controllers
                     db.Accounts.Add(account);
                     db.SaveChanges();
 
-                    return RedirectToAction("Index", "Home");
+                    string privateKey = account.PrivateKey;
+
+                    XmlDocument xml = new XmlDocument();
+                    xml.LoadXml(privateKey);
+                    string str = "";
+                    XmlNodeList xnList = xml.SelectNodes("/RSAKeyValue");
+                    foreach (XmlNode xn in xnList)
+                    {
+                        str = xn["Modulus"].InnerText;
+                    }
+
+                    //account.PrivateKey = String.Empty;                  
+                    return RedirectToAction("Index", "Home", new {key=str});
+
                 }
                 AddErrors(result);
             }

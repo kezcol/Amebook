@@ -107,3 +107,11 @@ textarea:focus {
     float:right;
     font-size:smaller;
 }
+
+.privateKey {
+    word-wrap: break-word;
+    border: 1px #a9a9a9 solid;
+    border-radius: 5px;
+    padding: 5px;
+    background-color: lightpink;
+}
