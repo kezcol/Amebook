@@ -69,7 +69,7 @@ textarea:focus {
 }
 
 
-.new-new-post-inner buttonplus {
+.new-new-post-inner #plus {
     float: left;
     position: relative;
     background-color:lightgreen;
@@ -77,7 +77,7 @@ textarea:focus {
     width:35px;
 }
 
-.new-new-post-inner buttonminus {
+.new-new-post-inner #minus {
     float: left;
     position: relative;
     background-color: indianred;

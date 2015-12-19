@@ -2,7 +2,7 @@
 @{
     ViewBag.Title = "Home Page";
 }
-<!--- gg -->
+
 <div class="content">
     <div class="new-post-box">
         <div class="new-post-inner">
@@ -12,25 +12,6 @@
                 <textarea placeholder="Wrzuc paste o serwerowni" id="content" name="content"></textarea>
                 <button class="btn btn-default btnSubmitPost">Wrzuc paste</button>
             }
-            
-        </div>
-    </div>
-</div>
-
-
-<div class="post-content">
-    <div class="post">
-        <div class="new-new-post-inner">
-            <div class="data"> 21:37 15.pazdziernik.2015</div>
-            <div class="user">Michał Biauek</div>
-
-            <div class="paragraph">
-                fafafsafaefaefaefaefas dasd
-                sdasdas
-                dasdas
-            </div>
-            <buttonplus class="btn btn-default">+</buttonplus>
-            <buttonminus class="btn btn-default">-</buttonminus>
         </div>
     </div>
 </div>
@@ -51,13 +32,45 @@
             </div>
         </div>
     </div>
-    <script>
+<script>
     $(document).ready(function() {
         $("#privatekeymodal").modal("show");
     });
-
-    $("#btnSubmitPost").click(function() {
-        $("#PostForm").submit();
+</script>
+}
+else if (Session["privateKey"] == null)
+{
+    <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" data-backdrop="static" id="privatekeymodal">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Wprowadź twój klucz prywatny</h4>
+                </div>
+                <div class="modal-body">
+                    @using (Ajax.BeginForm("AddPrivateKey", "Home", null, new AjaxOptions { HttpMethod = "POST" }, new { id = "PrivateKeyForm" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <textarea placeholder="Wprowadź twój klucz prywatny" id="privateKey" name="privateKey"></textarea>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="btnSubmit">Akceptuj</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+    $(document).ready(function() {
+        $("#privatekeymodal").modal("show");
+        $("#btnSubmit").click(function() {
+            $("#PrivateKeyForm").submit();
+        });
     });
     </script>
 }
+<script>
+    $("#btnSubmitPost").click(function () {
+        $("#PostForm").submit();
+    });
+</script>

@@ -103,7 +103,7 @@ namespace Amebook.Crypto
         {
             try
             {
-                byte[] bytePublicKey = System.Text.Encoding.UTF8.GetBytes(publicKey);
+                byte[] bytePublicKey = Convert.FromBase64String(publicKey);
 
                 //tworzy klucz AES i macierz Inicjującą
                 using (Aes myAes = Aes.Create())
@@ -130,6 +130,37 @@ namespace Amebook.Crypto
                 throw new Exception(e.Message);
             }
 
+        }
+
+        public static string DecryptionPost(Post post, string privateKey)
+        {
+            try
+            {
+
+                byte[] bytePrivateKey = Convert.FromBase64String(privateKey);
+                string text = bytePrivateKey.ToString();
+                //tworzy klucz AES i macierz Inicjującą
+                using (Aes myAes = Aes.Create())
+                {
+                    //tworzy nowa pare kluczy RSA
+                    using (RSACryptoServiceProvider myRsa = new RSACryptoServiceProvider())
+                    {
+                        // Deszyfrowanie
+                        RSAParameters RSAKeyInfo = new RSAParameters();
+                        RSAKeyInfo = myRsa.ExportParameters(true);
+                        RSAKeyInfo.Modulus = bytePrivateKey;
+                        myRsa.ImportParameters(RSAKeyInfo);
+                        byte[][] AesKeys = DecryptAesKey(post.Key, myRsa.ExportParameters(true));
+                        string plaintext = AesDecrypt(post.Content, AesKeys[0], AesKeys[1]);
+
+                        return plaintext;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
         }
 
         static void test()

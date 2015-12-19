@@ -12,6 +12,7 @@ using System.Web.UI.WebControls;
 using System.Xml;
 using Amebook.Crypto;
 using Amebook.Models;
+using Amebook.ViewModels;
 using Microsoft.AspNet.Identity;
 
 namespace Amebook.Controllers
@@ -22,11 +23,40 @@ namespace Amebook.Controllers
         [Authorize]
         public ActionResult Index(string key)
         {
-            string forcopy = key;
+            if (key != null)
+            {
+                string forcopy = key;
+                return View((object)forcopy);
+            }
+            if (Session["privateKey"] == null)
+            {
+                return View();
+            }
 
-            return View((object)forcopy);
+            var currentId = User.Identity.GetUserId();
+            var currentUser = db.Accounts.Single(x => x.AccountId == currentId);
+            var privateKey = (string)Session["privateKey"];
+            var model = new List<PostViewModel>();
+            foreach (var post in currentUser.Posts)
+            {
+                var modelPost = new PostViewModel();
+                var content = TextEncryption.DecryptionPost(post, privateKey);
+                modelPost.Author = post.Author;
+                modelPost.Content = content;
+                modelPost.Date = post.Date;
+                model.Add(modelPost);
+            }
+            return View(model);
         }
-        
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public ActionResult AddPrivateKey(string privateKey)
+        {
+            Session["privateKey"] = privateKey;
+            return RedirectToAction("Index", "Home");
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
