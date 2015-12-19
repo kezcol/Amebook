@@ -6,8 +6,13 @@
 <div class="content">
     <div class="new-post-box">
         <div class="new-post-inner">
-            <textarea placeholder="Wrzuc paste o serwerowni"></textarea>
-            <button class="btn btn-default">Wrzuc paste</button>
+            @using (Ajax.BeginForm("AddPost", "Home", null, new AjaxOptions { HttpMethod = "POST" }, new { id = "PostForm" }))
+            {
+                @Html.AntiForgeryToken()
+                <textarea placeholder="Wrzuc paste o serwerowni" id="content" name="content"></textarea>
+                <button class="btn btn-default btnSubmitPost">Wrzuc paste</button>
+            }
+            
         </div>
     </div>
 </div>
@@ -31,11 +36,10 @@
 </div>
 @if (Model != null)
 {
-    <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" id="privatekeymodal">
+    <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" data-backdrop="static" id="privatekeymodal">
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title" id="myModalLabel">Twój klucz prywatny - zapisz go i nikomu nie pokazuj</h4>
                 </div>
                 <div class="modal-body">
@@ -50,6 +54,10 @@
     <script>
     $(document).ready(function() {
         $("#privatekeymodal").modal("show");
+    });
+
+    $("#btnSubmitPost").click(function() {
+        $("#PostForm").submit();
     });
     </script>
 }

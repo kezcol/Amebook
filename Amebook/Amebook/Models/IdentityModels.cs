@@ -33,5 +33,6 @@ namespace Amebook.Models
         public DbSet<Account> Accounts { get; set; }
         public DbSet<Invitation> Invitations { get; set; }
         public DbSet<Friend> Friends { get; set; }
+        public DbSet<Post> Posts { get; set; }
     }
 }

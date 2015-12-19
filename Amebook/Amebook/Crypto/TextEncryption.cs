@@ -4,12 +4,13 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Web;
+using Amebook.Models;
 
 namespace Amebook.Crypto
 {
-    public class TextEncryption
+    public static class TextEncryption
     {
-        static byte[] AesEncrypt(String text, byte[] Key, byte[] IV)
+        public static byte[] AesEncrypt(String text, byte[] Key, byte[] IV)
         {
             byte[] cipher;
             if (text == null || text.Length <= 0)
@@ -96,6 +97,39 @@ namespace Amebook.Crypto
 
 
             return aesKeys;
+        }
+
+        public static Post EncryptionPost(Post post, string content, string publicKey)
+        {
+            try
+            {
+                byte[] bytePublicKey = System.Text.Encoding.UTF8.GetBytes(publicKey);
+
+                //tworzy klucz AES i macierz Inicjującą
+                using (Aes myAes = Aes.Create())
+                {
+                    //tworzy nowa pare kluczy RSA
+                    using (RSACryptoServiceProvider myRsa = new RSACryptoServiceProvider())
+                    {
+                        //Szyfrujemy text i zapisujemy do bazy 
+                        byte[] encrypted_data = AesEncrypt(content, myAes.Key, myAes.IV);
+                        //Szyfrujemy klucz i zapisujemy do bazy
+                        RSAParameters RSAKeyInfo = new RSAParameters();
+                        RSAKeyInfo = myRsa.ExportParameters(false);
+                        RSAKeyInfo.Modulus = bytePublicKey;
+                        myRsa.ImportParameters(RSAKeyInfo);
+                        byte[] encrypted_key = AesKeyEncrypt(myAes.Key, myAes.IV, myRsa.ExportParameters(false));
+                        post.Content = encrypted_data;
+                        post.Key = encrypted_key;
+                        return post;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+
         }
 
         static void test()

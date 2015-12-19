@@ -18,16 +18,18 @@ namespace Amebook.Models
         public string Nickname { get; set; }
         public string PublicKey { get; set; }
         [NotMapped]
-        public string PrivateKey { get; set; }
+        public string PrivateKey { get; }
             
         [ForeignKey("AccountId")]
         public virtual ApplicationUser ApplicationUser { get; set; }
         public virtual ICollection<Friend> Friends { get; set; }
+        public virtual ICollection<Post> Posts { get; set; }
 
         public Account()
         {
             var provider = new RSACryptoServiceProvider();
             PublicKey = provider.ToXmlString(false);
+
             PrivateKey = provider.ToXmlString(true);
 
         }

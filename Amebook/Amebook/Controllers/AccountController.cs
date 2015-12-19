@@ -74,7 +74,7 @@ namespace Amebook.Controllers
             {
                 return View(model);
             }
-
+            
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
             var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
@@ -166,11 +166,9 @@ namespace Amebook.Controllers
                     // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
                     var db = new ApplicationDbContext();
                     var account = new Account {AccountId = user.Id};
-                    db.Accounts.Add(account);
-                    db.SaveChanges();
+                    
 
                     string privateKey = account.PrivateKey;
-
                     XmlDocument xml = new XmlDocument();
                     xml.LoadXml(privateKey);
                     string str = "";
@@ -180,6 +178,15 @@ namespace Amebook.Controllers
                         str = xn["Modulus"].InnerText;
                     }
 
+                    xml.LoadXml(account.PublicKey);
+                    xnList = xml.SelectNodes("/RSAKeyValue");
+                    foreach (XmlNode xn in xnList)
+                    {
+                        account.PublicKey = xn["Modulus"].InnerText;
+                    }
+
+                    db.Accounts.Add(account);
+                    db.SaveChanges();
                     //account.PrivateKey = String.Empty;                  
                     return RedirectToAction("Index", "Home", new {key=str});
 
