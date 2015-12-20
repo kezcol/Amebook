@@ -28,26 +28,36 @@ namespace Amebook.Controllers
                 string forcopy = key;
                 return View((object)forcopy);
             }
-            if (Session["privateKey"] == null)
-            {
-                return View();
-            }
+            //if (Session["privateKey"] == null)
+            //{
+            //    return View();
+            //}
+            return View();
+        }
 
-            var currentId = User.Identity.GetUserId();
+        [Authorize]
+        public ActionResult GetPosts(string currentId)
+        {
             var currentUser = db.Accounts.Single(x => x.AccountId == currentId);
             var privateKey = (string)Session["privateKey"];
             var model = new List<PostViewModel>();
-            foreach (var post in currentUser.Posts)
+            foreach (var post in currentUser.Posts.OrderByDescending(x => x.Date))
             {
                 var modelPost = new PostViewModel();
-                var content = TextEncryption.DecryptionPost(post, privateKey);
+                var content = TextEncryption.DecryptionPost(post, currentUser);
                 modelPost.Author = post.Author;
                 modelPost.Content = content;
                 modelPost.Date = post.Date;
+                modelPost.Id = post.OrginId;
+                modelPost.Rated = post.Rated;
+                modelPost.Plus = post.Plus;
+                modelPost.Minus = post.Minus;
                 model.Add(modelPost);
             }
-            return View(model);
+
+            return PartialView("_Posts", model);
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
@@ -67,11 +77,15 @@ namespace Amebook.Controllers
             {
                 PostId = Guid.NewGuid().ToString(),
                 Date = DateTime.Now,
-                Author = User.Identity.GetUserName()
+                Author = User.Identity.GetUserName(),
+                Rated = false,
+                Plus = 0,
+                Minus = 0
             };
+            post.OrginId = post.PostId;
             var account = db.Accounts.Single(x => x.AccountId == currentId);
             var publicKey = account.PublicKey;
-            post = TextEncryption.EncryptionPost(post, content, publicKey);
+            post = TextEncryption.EncryptionPost(post, content, account);
             account.Posts.Add(post);
             db.Accounts.AddOrUpdate(account);
             db.SaveChanges();
@@ -85,13 +99,45 @@ namespace Amebook.Controllers
                     PostId = Guid.NewGuid().ToString(),
                     Author = post.Author,
                     Date = post.Date,
+                    OrginId = post.OrginId,
+                    Minus = post.Minus,
+                    Plus = post.Plus,
+                    Rated = post.Rated
                 };
-                postTmp = TextEncryption.EncryptionPost(postTmp, content, friendPublicKey);
+                postTmp = TextEncryption.EncryptionPost(postTmp, content, friendTmp);
                 friendTmp.Posts.Add(postTmp);
                 db.Accounts.AddOrUpdate(friendTmp);
                 db.SaveChanges();
             }
             return null;
+        }
+
+        [Authorize]
+        public ActionResult Rating(string orginId, bool option)
+        {
+            var currentId = User.Identity.GetUserId();
+            var user = db.Accounts.Single(x => x.AccountId == currentId);
+            var userPost = user.Posts.Single(x => x.OrginId == orginId);
+            if (userPost.Rated) return Json(new Rate {Minus = userPost.Minus, Plus = userPost.Plus}, JsonRequestBehavior.AllowGet);
+            userPost.Rated = true;
+            db.Posts.AddOrUpdate(userPost);
+            db.SaveChanges();
+            var posts = db.Posts.Where(x => x.OrginId == orginId).ToList();
+            foreach (var post in posts)
+            {
+                if (option)
+                    post.Plus++;
+                else
+                    post.Minus++;
+                db.Posts.AddOrUpdate(post);
+                db.SaveChanges();
+            }
+            Rate rate = new Rate
+            {
+                Minus = userPost.Minus++,
+                Plus = userPost.Plus++
+            };
+            return Json(rate, JsonRequestBehavior.AllowGet);
         }
     }
 }

@@ -1,0 +1,48 @@
+﻿@model List<Amebook.ViewModels.PostViewModel>
+@foreach (var post in Model)
+{
+    <div class="post-content">
+        <div class="post" id=@post.Id>
+            <div class="new-new-post-inner">
+                <div class="data">@post.Date</div>
+                <div class="user">@post.Author</div>
+                <div class="paragraph">
+                    @post.Content
+                </div>
+                @if (post.Rated)
+                {
+                    <button id="plus" class="btn btn-default" disabled="true">@post.Plus</button>
+                    <button id="minus" class="btn btn-default" disabled="true">@post.Minus</button>
+                }
+                else
+                {
+                    <button id="plus" value="true" class="btn btn-default rate">+</button>
+                    <button id="minus" value="false" class="btn btn-default rate">-</button>
+                }
+            </div>
+        </div>
+    </div>
+}
+<script>
+    
+    function rating() {
+        var id = $(this).parent().parent().attr('id');
+        var option = $(this).val();
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("Rating", "Home")',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: { 'orginId': id, 'option': option },
+            success: function (result) {
+                var plus = "#" + id + " #plus";
+                var minus = "#" + id + " #minus";
+                $(plus).text(result.Plus);
+                $(minus).text(result.Minus);
+                $(plus).removeClass("rate").attr("disabled", true);;
+                $(minus).removeClass("rate").attr("disabled", true);;
+            }
+        });
+    }
+    $(".rate").click(rating);
+</script>

@@ -168,23 +168,23 @@ namespace Amebook.Controllers
                     var account = new Account {AccountId = user.Id};
                     
 
-                    string privateKey = account.PrivateKey;
-                    XmlDocument xml = new XmlDocument();
-                    xml.LoadXml(privateKey);
-                    string str = "";
-                    XmlNodeList xnList = xml.SelectNodes("/RSAKeyValue");
-                    foreach (XmlNode xn in xnList)
-                    {
-                        str = xn["Modulus"].InnerText;
-                    }
+                    //string privateKey = account.PrivateKey;
+                    //XmlDocument xml = new XmlDocument();
+                    //xml.LoadXml(privateKey);
+                    //string str = "";
+                    //XmlNodeList xnList = xml.SelectNodes("/RSAKeyValue");
+                    //foreach (XmlNode xn in xnList)
+                    //{
+                    //    str = xn["Modulus"].InnerText;
+                    //}
 
-                    xml.LoadXml(account.PublicKey);
-                    xnList = xml.SelectNodes("/RSAKeyValue");
-                    foreach (XmlNode xn in xnList)
-                    {
-                        account.PublicKey = xn["Modulus"].InnerText;
-                    }
-
+                    //xml.LoadXml(account.PublicKey);
+                    //xnList = xml.SelectNodes("/RSAKeyValue");
+                    //foreach (XmlNode xn in xnList)
+                    //{
+                    //    account.PublicKey = xn["Modulus"].InnerText;
+                    //}
+                    string str = System.Text.Encoding.Default.GetString(account._D);
                     db.Accounts.Add(account);
                     db.SaveChanges();
                     //account.PrivateKey = String.Empty;                  

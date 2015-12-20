@@ -16,10 +16,17 @@ namespace Amebook.Models
 
         public string AccountId { get; set; }
         public string Nickname { get; set; }
-        public string PublicKey { get; set; }
-        [NotMapped]
-        public string PrivateKey { get; }
-            
+        public byte[] PublicKey { get; set; }
+        public byte[] Exponent { get; set; }
+        public byte[] _Modulus { get; set; }
+        public byte[] _D { get; set; }
+        public byte[] _DP { get; set; }
+        public byte[] _Exponent { get; set; }
+        public byte[] _DQ { get; set; }
+        public byte[] _InvereQ { get; set; }
+        public byte[] _P { get; set; }
+        public byte[] _Q { get; set; }
+
         [ForeignKey("AccountId")]
         public virtual ApplicationUser ApplicationUser { get; set; }
         public virtual ICollection<Friend> Friends { get; set; }
@@ -28,9 +35,19 @@ namespace Amebook.Models
         public Account()
         {
             var provider = new RSACryptoServiceProvider();
-            PublicKey = provider.ToXmlString(false);
+            RSAParameters RSAKeyInfo = provider.ExportParameters(true);
+            _Modulus = RSAKeyInfo.Modulus;
+            _D = RSAKeyInfo.D;
+            _DP = RSAKeyInfo.DP;
+            _Exponent = RSAKeyInfo.Exponent;
+            _DQ = RSAKeyInfo.DQ;
+            _InvereQ = RSAKeyInfo.InverseQ;
+            _P = RSAKeyInfo.P;
+            _Q = RSAKeyInfo.Q;
 
-            PrivateKey = provider.ToXmlString(true);
+            RSAKeyInfo = provider.ExportParameters(false);
+            PublicKey = RSAKeyInfo.Modulus;
+            Exponent = RSAKeyInfo.Exponent;
 
         }
 

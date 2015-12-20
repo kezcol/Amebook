@@ -1,4 +1,5 @@
-﻿@model string
+﻿@using Microsoft.AspNet.Identity
+@model string
 @{
     ViewBag.Title = "Home Page";
 }
@@ -48,7 +49,7 @@ else if (Session["privateKey"] == null)
                     <h4 class="modal-title" id="myModalLabel">Wprowadź twój klucz prywatny</h4>
                 </div>
                 <div class="modal-body">
-                    @using (Ajax.BeginForm("AddPrivateKey", "Home", null, new AjaxOptions { HttpMethod = "POST" }, new { id = "PrivateKeyForm" }))
+                    @using (Ajax.BeginForm("AddPrivateKey", "Home", null, new AjaxOptions {HttpMethod = "POST"}, new {id = "PrivateKeyForm"}))
                     {
                         @Html.AntiForgeryToken()
                         <textarea placeholder="Wprowadź twój klucz prywatny" id="privateKey" name="privateKey"></textarea>
@@ -61,13 +62,17 @@ else if (Session["privateKey"] == null)
         </div>
     </div>
     <script>
-    $(document).ready(function() {
-        $("#privatekeymodal").modal("show");
-        $("#btnSubmit").click(function() {
-            $("#PrivateKeyForm").submit();
+        $(document).ready(function() {
+            $("#privatekeymodal").modal("show");
+            $("#btnSubmit").click(function() {
+                $("#PrivateKeyForm").submit();
+            });
         });
-    });
     </script>
+}
+else
+{
+    @Html.Action("GetPosts", "Home", new { currentId = User.Identity.GetUserId()})
 }
 <script>
     $("#btnSubmitPost").click(function () {
