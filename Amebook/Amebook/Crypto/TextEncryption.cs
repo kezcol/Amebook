@@ -166,6 +166,71 @@ namespace Amebook.Crypto
             }
         }
 
+        public static Comment EncryptionComment(Comment comment, string content, Account account)
+        {
+            try
+            {
+                //tworzy klucz AES i macierz Inicjującą
+                using (Aes myAes = Aes.Create())
+                {
+                    //tworzy nowa pare kluczy RSA
+                    using (RSACryptoServiceProvider myRsa = new RSACryptoServiceProvider())
+                    {
+                        //Szyfrujemy text i zapisujemy do bazy 
+                        byte[] encrypted_data = AesEncrypt(content, myAes.Key, myAes.IV);
+                        //Szyfrujemy klucz i zapisujemy do bazy
+                        RSAParameters RSAKeyInfo = new RSAParameters();
+                        RSAKeyInfo = myRsa.ExportParameters(false);
+                        RSAKeyInfo.Modulus = account.PublicKey;
+                        RSAKeyInfo.Exponent = account.Exponent;
+                        myRsa.ImportParameters(RSAKeyInfo);
+                        byte[] encrypted_key = AesKeyEncrypt(myAes.Key, myAes.IV, myRsa.ExportParameters(false));
+                        comment.Content = encrypted_data;
+                        comment.Key = encrypted_key;
+                        return comment;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        public static string DecryptionComment(Comment comment, Account account)
+        {
+            try
+            {
+
+                //byte[] bytePrivateKey = System.Text.Encoding.Default.GetBytes(privateKey);
+                //tworzy klucz AES i macierz Inicjującą
+                //tworzy nowa pare kluczy RSA
+                using (RSACryptoServiceProvider myRsa = new RSACryptoServiceProvider())
+                {
+                    // Deszyfrowanie
+                    RSAParameters RSAKeyInfo = new RSAParameters();
+                    RSAKeyInfo = myRsa.ExportParameters(true);
+                    RSAKeyInfo.Modulus = account._Modulus;
+                    RSAKeyInfo.D = account._D;
+                    RSAKeyInfo.DP = account._DP;
+                    RSAKeyInfo.DQ = account._DQ;
+                    RSAKeyInfo.Exponent = account._Exponent;
+                    RSAKeyInfo.InverseQ = account._InvereQ;
+                    RSAKeyInfo.P = account._P;
+                    RSAKeyInfo.Q = account._Q;
+                    myRsa.ImportParameters(RSAKeyInfo);
+                    byte[][] AesKeys = DecryptAesKey(comment.Key, RSAKeyInfo);
+                    string plaintext = AesDecrypt(comment.Content, AesKeys[0], AesKeys[1]);
+
+                    return plaintext;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
         static void test()
         {
             try

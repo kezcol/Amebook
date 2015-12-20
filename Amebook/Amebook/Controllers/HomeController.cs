@@ -84,6 +84,7 @@ namespace Amebook.Controllers
             };
             post.OrginId = post.PostId;
             var account = db.Accounts.Single(x => x.AccountId == currentId);
+            post.AccountId = currentId;
             var publicKey = account.PublicKey;
             post = TextEncryption.EncryptionPost(post, content, account);
             account.Posts.Add(post);
@@ -102,7 +103,8 @@ namespace Amebook.Controllers
                     OrginId = post.OrginId,
                     Minus = post.Minus,
                     Plus = post.Plus,
-                    Rated = post.Rated
+                    Rated = post.Rated,
+                    AccountId = friendTmp.AccountId
                 };
                 postTmp = TextEncryption.EncryptionPost(postTmp, content, friendTmp);
                 friendTmp.Posts.Add(postTmp);

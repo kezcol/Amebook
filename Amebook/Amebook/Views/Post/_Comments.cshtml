@@ -1,0 +1,16 @@
+﻿@model List<Amebook.ViewModels.CommentViewModel>
+
+@foreach (var comment in Model)
+{
+    <div class="post-content">
+        <div class="post" id=@comment.Id>
+            <div class="new-new-post-inner">
+                <div class="data">@comment.Date</div>
+                <div class="user">@comment.Author</div>
+                <div class="paragraph">
+                    @comment.Content
+                </div>
+            </div>
+        </div>
+    </div>
+}
