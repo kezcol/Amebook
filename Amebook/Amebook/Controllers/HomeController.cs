@@ -109,7 +109,7 @@ namespace Amebook.Controllers
                 db.Accounts.AddOrUpdate(friendTmp);
                 db.SaveChanges();
             }
-            return null;
+            return View("Index");
         }
 
         [Authorize]
